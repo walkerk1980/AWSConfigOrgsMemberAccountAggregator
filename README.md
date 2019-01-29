@@ -15,5 +15,6 @@ This script requires Python3 installed and the boto3 library.
 Also note that this script does not enable Config Service in your AWS Accounts, only create an Aggregator and authorize it. If you are looking for a solution to manage the Config Service and it's Rules across multiple AWS Accounts please check out the links below. [2][3]
 
 [2] https://aws.amazon.com/blogs/devops/how-to-centrally-manage-aws-config-rules-across-multiple-aws-accounts/
+
 [3] Working with AWS CloudFormation StackSets - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html
 
