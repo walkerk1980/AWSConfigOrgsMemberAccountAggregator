@@ -72,14 +72,14 @@ try:
 except Exception as e:
     print(e)
 
-def put_auth(config_client, account, aggregator_region, config_region):
+def put_auth(config_client, aggregator_account, aggregator_region, config_region, authorization_account):
     try:
         config_client.put_aggregation_authorization(
-            AuthorizedAccountId=account,
+            AuthorizedAccountId=aggregator_account,
             AuthorizedAwsRegion=aggregator_region
         )
-        authorizations = master_config.describe_aggregation_authorizations()
-        print('Sucessfully authorized Aggregator in ' + config_region + ' in ' + account + ': ')
+        authorizations = config_client.describe_aggregation_authorizations()
+        print('Sucessfully authorized Aggregator in ' + config_region + ' in ' + authorization_account + ': ')
         for authorization in authorizations.get('AggregationAuthorizations'):
             if authorization.get('AuthorizedAwsRegion') == config_region:
                 print(authorization.get('AuthorizedAwsRegion'))
@@ -89,14 +89,14 @@ def put_auth(config_client, account, aggregator_region, config_region):
         print(re)
         return(re)
 
-def delete_auth(config_client, account, aggregator_region, config_region):
+def delete_auth(config_client, aggregator_account, aggregator_region, config_region, authorization_account):
     try:
         config_client.delete_aggregation_authorization(
-            AuthorizedAccountId=account,
+            AuthorizedAccountId=aggregator_account,
             AuthorizedAwsRegion=aggregator_region
         )
-        authorizations = master_config.describe_aggregation_authorizations()
-        print('Sucessfully Deleted authorization in Region ' + config_region + ' in ' + account + ': ')
+        authorizations = config_client.describe_aggregation_authorizations()
+        print('Sucessfully Deleted authorization in Region ' + config_region + ' in ' + authorization_account + ': ')
         for authorization in authorizations.get('AggregationAuthorizations'):
             print('Deleting authorizations in ' + account + ' ' + config_region)
     except Exception as re:
@@ -142,7 +142,7 @@ for account in account_ids:
             for config_region in config_regions:
                 member_config = member_session.client('config', region_name=config_region)
                 print('Authorizing Region: ' + config_region)
-                e = put_auth(member_config, aggregator_account, aggregator_region, config_region)
+                e = put_auth(member_config, aggregator_account, aggregator_region, config_region, account)
                 if e:
                     raise e
         if account == master_account_id:
@@ -150,7 +150,7 @@ for account in account_ids:
             for config_region in config_regions:
                 master_config = master_session.client('config', region_name=config_region)
                 print('Authorizing Region: ' + config_region)
-                e = put_auth(master_config, aggregator_account, aggregator_region, config_region)
+                e = put_auth(master_config, aggregator_account, aggregator_region, config_region, account)
                 if e:
                     raise e
     except Exception as e:
